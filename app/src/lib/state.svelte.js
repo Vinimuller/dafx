@@ -9,6 +9,7 @@ export const DRY_SOUNDS = [
   { key: 'click', label: 'Click (impulse)', file: 'dry-click.wav' },
   { key: 'drum', label: 'Drum hit', file: 'dry-drum.wav' },
   { key: 'voice', label: 'Voice (vowel sweep)', file: 'dry-voice.wav' },
+  { key: 'bell', label: 'Bell (resonant)', file: 'dry-bell.wav' },
 ];
 
 export const RECORDED_IRS = [

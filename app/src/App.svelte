@@ -119,7 +119,10 @@
           </div>
         {/if}
         <div class="panel display waveform">
-          <div class="display-label eyebrow">Time domain — dry · IR · output</div>
+          <div class="display-label eyebrow">
+            Time domain — dry · IR · output
+            <span class="hint">scroll to zoom · drag to pan · double-click to reset</span>
+          </div>
           <div class="canvas-host"><Waveform /></div>
         </div>
       </section>
@@ -182,6 +185,7 @@
   }
   .display { display: flex; flex-direction: column; min-height: 0; }
   .display-label, .panel-label { margin-bottom: 0.5rem; }
+  .display-label .hint { margin-left: 0.6rem; color: var(--ink-faint); text-transform: none; letter-spacing: 0; }
   .spectrum { min-height: 0; }
   .canvas-host { flex: 1; min-height: 0; }
   .waveform .canvas-host { min-height: 170px; }
