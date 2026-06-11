@@ -3,9 +3,10 @@
   // three stacked lanes on a SHARED time axis: the longest signal fills the full
   // width, and shorter signals occupy a proportional left-portion (length /
   // maxLen) at the same samples-per-pixel scale. So the lanes line up in time and
-  // their relative durations are visible. A per-lane duration readout gives the
-  // absolute scale. Static redraw on buffer change (no animation loop — the
-  // signals are fixed buffers).
+  // their relative durations are visible. Each lane's name and duration sit
+  // together on the right as a legend, the name tinted with the trace color so it
+  // doubles as the color key. Static redraw on buffer change (no animation loop —
+  // the signals are fixed buffers).
   import { app } from '../lib/state.svelte.js';
   import { fitCanvas, drawGrid, cssVar } from '../lib/draw.js';
 
@@ -80,14 +81,19 @@
         const laneW = w * (lane.buffer.length / maxLen);
         drawTrace(ctx, lane.buffer.getChannelData(0), 0, y, laneW, laneH, lane.color);
       }
-      // lane label (left) and duration readout (right)
-      ctx.textAlign = 'left';
-      ctx.fillStyle = cssVar('--ink-dim');
-      ctx.fillText(lane.label, 6, y + 12);
+      // legend on the right: signal name (in its trace color) + duration readout.
+      // Right-aligned so the names line up; the name doubles as the color key.
+      ctx.textAlign = 'right';
+      const ty = y + 12;
       if (lane.buffer) {
-        ctx.textAlign = 'right';
         ctx.fillStyle = cssVar('--ink-faint');
-        ctx.fillText(durationLabel(lane.buffer), w - 6, y + 12);
+        ctx.fillText(durationLabel(lane.buffer), w - 6, ty);
+        const durW = ctx.measureText(durationLabel(lane.buffer)).width;
+        ctx.fillStyle = lane.color;
+        ctx.fillText(lane.label, w - 6 - durW - 10, ty);
+      } else {
+        ctx.fillStyle = lane.color;
+        ctx.fillText(lane.label, w - 6, ty);
       }
     });
     ctx.textAlign = 'left';
