@@ -1,0 +1,126 @@
+/* app.css — global design tokens & base styles.
+ *
+ * Design discipline (see docs/convolution-demo-plan.md §6): an instrument /
+ * lab-bench look. COLOUR BELONGS TO THE SIGNAL ONLY. Every control, label, grid
+ * and panel is monochrome blue-graphite; the only chromatic elements are the
+ * live signal traces (dry / IR / output) on the displays. The audience's eye
+ * always knows the coloured, moving thing is the signal being manipulated.
+ */
+
+:root {
+  /* monochrome blue-graphite scale (CRT-bezel feel) */
+  --bg:        hsl(210 28% 7%);
+  --panel:     hsl(210 24% 11%);
+  --panel-2:   hsl(210 22% 14%);
+  --line:      hsl(210 18% 22%);
+  --line-soft: hsl(210 16% 17%);
+  --grid:      hsl(200 20% 30% / 0.28);
+  --grid-axis: hsl(200 20% 45% / 0.45);
+
+  --ink:       hsl(205 18% 90%);   /* primary text */
+  --ink-dim:   hsl(205 12% 62%);   /* secondary text */
+  --ink-faint: hsl(205 10% 44%);   /* tertiary / disabled */
+
+  --focus:     hsl(190 90% 65%);   /* keyboard focus ring (kept cool/neutral) */
+
+  /* the ONLY chromatic hues in the app — reserved for signal traces */
+  --sig-dry:    hsl(210 55% 62%);  /* dry: cool, recedes */
+  --sig-ir:     hsl( 38 95% 60%);  /* impulse response: amber */
+  --sig-out:    hsl(165 85% 55%);  /* output: bright phosphor — the hero */
+
+  --mono: ui-monospace, "SF Mono", "JetBrains Mono", "Menlo", monospace;
+  --sans: ui-sans-serif, system-ui, "Helvetica Neue", "Inter", Arial, sans-serif;
+
+  --r: 6px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+#app { height: 100%; }
+
+h1, h2, h3 { font-weight: 600; letter-spacing: 0.01em; margin: 0; }
+
+button {
+  font-family: var(--sans);
+  font-size: 0.95rem;
+  color: var(--ink);
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  padding: 0.55rem 0.9rem;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+}
+button:hover:not(:disabled) { background: hsl(210 22% 18%); border-color: var(--ink-faint); }
+button:disabled { color: var(--ink-faint); cursor: not-allowed; opacity: 0.6; }
+button[aria-pressed="true"], button.active {
+  background: hsl(210 26% 20%);
+  border-color: var(--ink-dim);
+  color: var(--ink);
+}
+
+/* numeric readouts are DATA — always monospace */
+.num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+label { font-size: 0.82rem; color: var(--ink-dim); letter-spacing: 0.02em; }
+
+.eyebrow {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--ink-faint);
+}
+
+/* generic range slider, monochrome */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  background: var(--line);
+  border-radius: 2px;
+  outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--ink);
+  border: 2px solid var(--bg);
+  cursor: pointer;
+}
+input[type="range"]::-moz-range-thumb {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--ink);
+  border: 2px solid var(--bg);
+  cursor: pointer;
+}
+
+select {
+  font-family: var(--sans);
+  color: var(--ink);
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  padding: 0.45rem 0.6rem;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
