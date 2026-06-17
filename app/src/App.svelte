@@ -21,7 +21,7 @@
 
   // view toggle: hide the frequency-domain panel to give the time-domain view
   // the full display height
-  let showSpectrum = $state(true);
+  let showSpectrum = $state(false);
 
   async function enable() {
     await ensureAudio();
