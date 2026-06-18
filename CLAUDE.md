@@ -25,6 +25,12 @@ There is **no test runner, linter, or formatter** configured. "Verifying" means 
 
 Always serve over `localhost`: Web Audio needs a secure context, so opening built `index.html` via `file://` fails. The user must click **Enable audio** before any sound (browsers require a user gesture).
 
+## Deployment
+
+The app deploys to **GitHub Pages** at `https://vinimuller.github.io/dafx/` via `.github/workflows/deploy.yml` — every push to `main` (or a manual `workflow_dispatch`) runs `npm ci && npm run build` from `app/` and publishes `app/dist`. Pages is configured with Source: **GitHub Actions** (set once in repo Settings → Pages).
+
+`vite.config.js` uses `base: './'` (relative asset paths) so the bundle works under the `/dafx/` subpath without hardcoding it. Pages serves over HTTPS, which satisfies Web Audio's secure-context requirement. If client-side routing is ever added, switch `base` to `'/dafx/'`.
+
 ## Architecture
 
 The hard rule, and the reason the code reads the way it does: **DSP and audio code under `lib/dsp` and `lib/audio` import no Svelte and take/return plain numbers, `Float32Array`s, and `AudioBuffer`s.** They are framework-free teaching material. Svelte reactivity lives only in `.svelte` files and `state.svelte.js`.

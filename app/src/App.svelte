@@ -19,9 +19,9 @@
   import Waveform from './components/Waveform.svelte';
   import Spectrum from './components/Spectrum.svelte';
 
-  // view toggle: hide the frequency-domain panel to give the time-domain view
-  // the full display height
-  let showSpectrum = $state(false);
+  // view toggle: time-domain and frequency-domain are mutually exclusive — only
+  // one is visible at a time, and it fills the full display height.
+  let view = $state('time'); // 'time' | 'freq'
 
   async function enable() {
     await ensureAudio();
@@ -90,13 +90,10 @@
     </div>
     <div class="head-right">
       {#if app.audioReady}
-        <button
-          class="view-toggle"
-          aria-pressed={!showSpectrum}
-          onclick={() => (showSpectrum = !showSpectrum)}
-        >
-          {showSpectrum ? 'Hide' : 'Show'} spectrum
-        </button>
+        <div class="view-toggle" role="group" aria-label="Display domain">
+          <button class:active={view === 'time'} aria-pressed={view === 'time'} onclick={() => (view = 'time')}>Time</button>
+          <button class:active={view === 'freq'} aria-pressed={view === 'freq'} onclick={() => (view = 'freq')}>Frequency</button>
+        </div>
       {/if}
       <div class="status num">{app.status}</div>
     </div>
@@ -112,19 +109,24 @@
     </div>
   {:else}
     <main>
-      <section class="displays" class:solo-wave={!showSpectrum}>
-        {#if showSpectrum}
+      <section class="displays">
+        {#if view === 'freq'}
           <div class="panel display spectrum">
+            <div class="display-label eyebrow">
+              Frequency domain — dry · IR · output
+              <span class="hint">linear axis · 20 Hz – 20 kHz</span>
+            </div>
             <Spectrum />
           </div>
-        {/if}
-        <div class="panel display waveform">
-          <div class="display-label eyebrow">
-            Time domain — dry · IR · output
-            <span class="hint">scroll to zoom · drag to pan · double-click to reset</span>
+        {:else}
+          <div class="panel display waveform">
+            <div class="display-label eyebrow">
+              Time domain — dry · IR · output
+              <span class="hint">scroll to zoom · drag to pan · double-click to reset</span>
+            </div>
+            <div class="canvas-host"><Waveform /></div>
           </div>
-          <div class="canvas-host"><Waveform /></div>
-        </div>
+        {/if}
       </section>
 
       <section class="controls">
@@ -163,7 +165,10 @@
   .title { display: flex; align-items: baseline; gap: 0.8rem; flex-wrap: wrap; }
   h1 { font-size: 1.5rem; }
   .head-right { display: flex; align-items: center; gap: 0.9rem; flex-wrap: wrap; }
-  .view-toggle { padding: 0.35rem 0.7rem; font-size: 0.8rem; }
+  .view-toggle { display: flex; gap: 0; }
+  .view-toggle button { border-radius: 0; padding: 0.35rem 0.8rem; font-size: 0.8rem; }
+  .view-toggle button:first-child { border-radius: var(--r) 0 0 var(--r); }
+  .view-toggle button:last-child { border-radius: 0 var(--r) var(--r) 0; border-left: none; }
   .status { font-size: 0.75rem; color: var(--ink-dim); }
 
   .gate { flex: 1; display: grid; place-items: center; }
@@ -177,8 +182,7 @@
 
   main { flex: 1; display: grid; grid-template-rows: 1fr auto; gap: 0.9rem; min-height: 0; }
 
-  .displays { display: grid; grid-template-rows: 1.4fr 1fr; gap: 0.9rem; min-height: 0; }
-  .displays.solo-wave { grid-template-rows: 1fr; } /* spectrum hidden — waveform fills */
+  .displays { display: grid; grid-template-rows: 1fr; gap: 0.9rem; min-height: 0; } /* one domain at a time, fills height */
   .panel {
     background: var(--panel); border: 1px solid var(--line);
     border-radius: 8px; padding: 0.85rem 1rem;
