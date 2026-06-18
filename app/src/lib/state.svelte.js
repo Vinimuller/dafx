@@ -28,13 +28,16 @@ class AppState {
   drySource = $state('drum');
 
   // IR mode + parameters
-  irMode = $state('train'); // 'train' | 'noise' | 'recorded'
+  irMode = $state('train'); // 'train' | 'noise' | 'fir' | 'recorded'
   // impulse train
   spacingMs = $state(160);
   pulseCount = $state(6);
   trainDecay = $state(0.78);
   // decaying noise
   decayMs = $state(700);
+  // FIR highpass
+  firCutoffHz = $state(1000);
+  firTaps = $state(101);
   // recorded
   recordedKey = $state('bell');
 
@@ -53,7 +56,9 @@ class AppState {
       ? `train:${this.spacingMs}:${this.pulseCount}:${this.trainDecay}`
       : this.irMode === 'noise'
         ? `noise:${this.decayMs}`
-        : `rec:${this.recordedKey}`,
+        : this.irMode === 'fir'
+          ? `fir:${this.firCutoffHz}:${this.firTaps}`
+          : `rec:${this.recordedKey}`,
   );
 }
 

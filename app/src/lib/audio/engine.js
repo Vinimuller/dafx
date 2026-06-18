@@ -11,6 +11,7 @@ import { loadSound } from './assets.js';
 import { play, stop, renderOutput } from './graph.js';
 import { impulseTrainBuffer } from '../dsp/impulseTrain.js';
 import { noiseBurstBuffer } from '../dsp/noiseBurst.js';
+import { firHighpassBuffer } from '../dsp/firHighpass.js';
 
 /** Load the currently-selected dry sound. @returns {Promise<AudioBuffer>} */
 export function loadCurrentDry() {
@@ -30,6 +31,8 @@ export async function buildCurrentIr() {
       });
     case 'noise':
       return noiseBurstBuffer(ctx, { decayMs: app.decayMs });
+    case 'fir':
+      return firHighpassBuffer(ctx, { cutoffHz: app.firCutoffHz, numTaps: app.firTaps });
     case 'recorded': {
       const rec = RECORDED_IRS.find((r) => r.key === app.recordedKey) ?? RECORDED_IRS[0];
       return loadSound(rec.file);

@@ -7,8 +7,16 @@
   const MODES = [
     { key: 'train', label: 'Impulse train' },
     { key: 'noise', label: 'Decaying noise' },
+    { key: 'fir', label: 'FIR highpass' },
     { key: 'recorded', label: 'Recorded' },
   ];
+
+  // readout for the FIR cutoff slider (Hz below 1k, else k)
+  const firCutoffLabel = $derived(
+    app.firCutoffHz < 1000
+      ? `${app.firCutoffHz} Hz`
+      : `${(app.firCutoffHz / 1000).toFixed(app.firCutoffHz % 1000 === 0 ? 0 : 1)} kHz`,
+  );
 
   // implied comb pitch from pulse spacing (1 / spacing). Below ~50 Hz the ear
   // hears discrete echoes; above it, a pitch. This is the rhythm<->timbre line.
@@ -68,6 +76,17 @@
       <label for="ndecay">Decay time <span class="num">{app.decayMs} ms</span></label>
       <input id="ndecay" type="range" min="80" max="3000" step="10" bind:value={app.decayMs} />
       <p class="note">White noise × exponential decay — the textbook diffuse-reverb IR.</p>
+    </div>
+
+  {:else if app.irMode === 'fir'}
+    <div class="param">
+      <label for="fircut">Cutoff <span class="num">{firCutoffLabel}</span></label>
+      <input id="fircut" type="range" min="100" max="8000" step="10" bind:value={app.firCutoffHz} />
+    </div>
+    <div class="param wide">
+      <label for="firtaps">Taps — sharpness <span class="num">{app.firTaps}</span></label>
+      <input id="firtaps" type="range" min="11" max="301" step="2" bind:value={app.firTaps} />
+      <p class="note">A windowed-sinc highpass — here the IR <em>is</em> the filter. More taps = steeper rolloff.</p>
     </div>
 
   {:else}
