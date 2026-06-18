@@ -44,7 +44,13 @@ built `index.html` via `file://` will **not** work. Click **Enable audio** first
 3. **Recorded IRs** (Bell / Vowel / Room): convolving imposes that sound's
    resonances onto the dry signal. Switch the Spectrum view to **Buffers** to see
    `|A|·|B| = |output|` — the IR's formants/comb carving into the dry spectrum.
-4. **Compute by hand**: toggles a plain-JS direct-sum convolution
+4. **FIR highpass** mode: a designed filter as an IR — _the IR is the filter_.
+   A windowed-sinc highpass (Hamming window + spectral inversion,
+   `src/lib/dsp/firHighpass.js`). In the **Buffers** spectrum the IR lane shows a
+   flat ~0 dB passband with a corner at the *Cutoff* (default 1 kHz); drag
+   *Cutoff* to slide the corner, raise *Taps* to steepen the rolloff (and lengthen
+   the IR in the time view). The bridge from "convolution" to "filtering".
+5. **Compute by hand**: toggles a plain-JS direct-sum convolution
    (`src/lib/dsp/convolve.js`) in place of the `ConvolverNode`; the output matches.
 
 ## Audio assets
@@ -69,7 +75,7 @@ DSP is kept strictly separate from UI (no Svelte imports in `lib/dsp` or
 ```
 src/
   lib/
-    dsp/        impulseTrain · noiseBurst · convolve (direct-sum reference) · spectrum (FFT)
+    dsp/        impulseTrain · noiseBurst · firHighpass · convolve (direct-sum reference) · spectrum (FFT)
     audio/      context (gesture/resume) · graph (play + offline render) · assets · engine (state↔dsp bridge)
     state.svelte.js   shared reactive state (runes)
     draw.js     canvas helpers
